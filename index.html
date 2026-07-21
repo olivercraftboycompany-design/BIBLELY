@@ -3,325 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bible Reader Dashboard</title>
+    <title>Web Bible Reader</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        /* CSS Styling for a Clean, Modern UI */
+        :root {
+            --bg-color: #fcfcfc;
+            --text-main: #333;
+            --accent-color: #2c3e50;
+            --sidebar-bg: #f4f4f4;
+            --border-color: #e0e0e0;
         }
 
         body {
-            background-color: #f5f5f5;
-            color: #333;
-        }
-
-        .dashboard {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             display: flex;
+            flex-direction: column;
             height: 100vh;
         }
 
-        .sidebar {
-            width: 300px;
-            background-color: #2c3e50;
+        /* Top Navigation Bar */
+        header {
+            background-color: var(--accent-color);
             color: white;
+            padding: 1rem 2rem;
             display: flex;
-            flex-direction: column;
-            overflow-y: auto;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .sidebar h2 {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #34495e;
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
         }
 
-        .search-container {
-            padding: 15px;
-        }
-
-        #searchInput {
-            width: 100%;
-            padding: 10px;
+        #search-bar {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
             border: none;
-            border-radius: 4px;
+            width: 300px;
+            font-size: 1rem;
             outline: none;
         }
 
-        #bookList {
+        /* Main Layout */
+        .container {
+            display: flex;
             flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar for Navigation */
+        aside {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: #e2e2e2;
+        }
+
+        .nav-item.active {
+            background-color: #ddd;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        /* Reading Area */
+        main {
+            flex: 1;
+            padding: 2rem 10%;
+            overflow-y: auto;
+            font-family: "Georgia", serif; /* Serif font for better reading */
+            line-height: 1.8;
+            font-size: 1.2rem;
         }
 
         .book-title {
-            padding: 15px;
-            background-color: #34495e;
-            cursor: pointer;
-            user-select: none;
-            border-bottom: 1px solid #2c3e50;
-            font-weight: bold;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--accent-color);
         }
 
-        .book-title:hover {
-            background-color: #3b536b;
-        }
-
-        .chapter-list {
-            display: none; 
-            background-color: #2c3e50;
-            padding: 10px 15px;
-        }
-
-        .chapter-btn {
-            display: inline-block;
-            padding: 8px 12px;
-            margin: 5px;
-            background-color: #ecf0f1;
-            color: #2c3e50;
-            text-decoration: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-
-        .chapter-btn:hover {
-            background-color: #bdc3c7;
-        }
-
-        .content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: #fff;
-            overflow-y: auto;
-        }
-
-        header {
-            padding: 30px;
-            border-bottom: 1px solid #eee;
-            background-color: #fafafa;
-        }
-
-        #readerArea {
-            padding: 30px;
-            max-width: 800px;
-            margin: 0 auto;
-            width: 100%;
-            line-height: 1.8;
-            font-size: 1.1em;
-        }
-
-        .verse-block {
-            margin-bottom: 15px;
-            display: flex;
+        .verse-container {
+            margin-bottom: 1rem;
         }
 
         .verse-num {
+            font-size: 0.8em;
             font-weight: bold;
-            color: #7f8c8d;
-            margin-right: 15px;
-            min-width: 25px;
-            user-select: none;
+            color: #888;
+            margin-right: 8px;
+            vertical-align: super;
         }
 
-        .verse-text {
-            flex: 1;
-        }
-
-        .search-result {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .search-ref {
-            font-weight: bold;
-            color: #2980b9;
-            cursor: pointer;
-            margin-bottom: 5px;
-            display: inline-block;
-        }
-
-        .search-ref:hover {
-            text-decoration: underline;
-        }
-
-        mark {
+        /* Highlight for search results */
+        .highlight {
             background-color: #ffeaa7;
-            padding: 2px;
+            padding: 0 3px;
             border-radius: 3px;
+        }
+
+        .search-results-title {
+            font-family: -apple-system, sans-serif;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <h2>Bible Reader</h2>
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search scripture (min. 3 letters)...">
-            </div>
-            <nav id="bookList">
-                <!-- Books and chapters will be injected here via JS -->
-            </nav>
-        </aside>
 
-        <!-- Main Reading Area -->
-        <main class="content">
-            <header>
-                <h1 id="chapterTitle">Welcome</h1>
-            </header>
-            <div id="readerArea">
-                <p>Select a chapter from the left to start reading, or use the search bar to find specific verses.</p>
-            </div>
+    <header>
+        <h1>Bible Reader</h1>
+        <input type="text" id="search-bar" placeholder="Search verses or keywords...">
+    </header>
+
+    <div class="container">
+        <aside id="sidebar">
+            </aside>
+
+        <main id="reader-view">
+            <h2 style="font-family: sans-serif; color: #888; text-align: center; margin-top: 50px;">
+                Select a chapter from the sidebar to begin reading.
+            </h2>
         </main>
     </div>
 
-    <!-- 1. Load the data template first -->
     <script src="bible-data.js"></script>
 
-    <!-- 2. Application Logic -->
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const bookListEl = document.getElementById("bookList");
-            const readerAreaEl = document.getElementById("readerArea");
-            const chapterTitleEl = document.getElementById("chapterTitle");
-            const searchInput = document.getElementById("searchInput");
+        const sidebar = document.getElementById('sidebar');
+        const readerView = document.getElementById('reader-view');
+        const searchBar = document.getElementById('search-bar');
 
-            // Build the sidebar navigation
-            function renderNavigation() {
-                bookListEl.innerHTML = "";
+        // Function to initialize the sidebar navigation
+        function initNavigation() {
+            sidebar.innerHTML = '';
+            
+            // Assuming bibleData is loaded from bible-data.js
+            bibleData.forEach((chapterData, index) => {
+                const navItem = document.createElement('div');
+                navItem.className = 'nav-item';
+                navItem.textContent = `${chapterData.book} ${chapterData.chapter}`;
                 
-                if (typeof bibleData === 'undefined') {
-                    readerAreaEl.innerHTML = "<p style='color:red;'>Error: bible-data.js not found. Make sure the file exists in the same folder!</p>";
-                    return;
-                }
-
-                bibleData.forEach((bookObj) => {
-                    const bookHeader = document.createElement("div");
-                    bookHeader.className = "book-title";
-                    bookHeader.innerText = bookObj.book;
+                navItem.addEventListener('click', () => {
+                    // Remove active class from all, add to current
+                    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                    navItem.classList.add('active');
                     
-                    const chapterContainer = document.createElement("div");
-                    chapterContainer.className = "chapter-list";
-                    
-                    bookObj.chapters.forEach((chapObj) => {
-                        const chapBtn = document.createElement("span");
-                        chapBtn.className = "chapter-btn";
-                        chapBtn.innerText = `Ch. ${chapObj.chapter}`;
-                        
-                        chapBtn.addEventListener("click", () => {
-                            displayChapter(bookObj.book, chapObj.chapter, chapObj.verses);
-                        });
-                        
-                        chapterContainer.appendChild(chapBtn);
-                    });
-                    
-                    bookHeader.addEventListener("click", () => {
-                        const isVisible = chapterContainer.style.display === "block";
-                        chapterContainer.style.display = isVisible ? "none" : "block";
-                    });
-                    
-                    bookListEl.appendChild(bookHeader);
-                    bookListEl.appendChild(chapterContainer);
+                    displayChapter(chapterData);
                 });
+                
+                sidebar.appendChild(navItem);
+            });
+        }
+
+        // Function to display a specific chapter
+        function displayChapter(data) {
+            let html = `<h1 class="book-title">${data.book} ${data.chapter}</h1>`;
+            
+            data.verses.forEach((verse, index) => {
+                html += `
+                    <div class="verse-container">
+                        <span class="verse-num">${index + 1}</span>
+                        <span class="verse-text">${verse}</span>
+                    </div>
+                `;
+            });
+            
+            readerView.innerHTML = html;
+        }
+
+        // Function to handle searching across all loaded data
+        function handleSearch(query) {
+            if (!query) {
+                readerView.innerHTML = '<h2 style="font-family: sans-serif; color: #888; text-align: center; margin-top: 50px;">Select a chapter from the sidebar to begin reading.</h2>';
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                return;
             }
 
-            // Display a chapter
-            function displayChapter(bookName, chapterNum, verses) {
-                chapterTitleEl.innerText = `${bookName} Chapter ${chapterNum}`;
-                readerAreaEl.innerHTML = "";
-                
-                verses.forEach((verseText, index) => {
-                    const verseBlock = document.createElement("div");
-                    verseBlock.className = "verse-block";
-                    
-                    const verseNum = document.createElement("span");
-                    verseNum.className = "verse-num";
-                    verseNum.innerText = index + 1;
-                    
-                    const verseTextEl = document.createElement("span");
-                    verseTextEl.className = "verse-text";
-                    verseTextEl.innerText = verseText;
-                    
-                    verseBlock.appendChild(verseNum);
-                    verseBlock.appendChild(verseTextEl);
-                    readerAreaEl.appendChild(verseBlock);
-                });
-            }
+            const lowerQuery = query.toLowerCase();
+            let resultsHtml = `<h2 class="search-results-title">Search Results for "${query}"</h2>`;
+            let matchCount = 0;
 
-            // Search Functionality
-            searchInput.addEventListener("input", (e) => {
-                const query = e.target.value.toLowerCase().trim();
-                
-                if (query.length < 3) {
-                    if (query.length === 0) {
-                        chapterTitleEl.innerText = "Welcome";
-                        readerAreaEl.innerHTML = "<p>Select a chapter from the left to start reading.</p>";
+            bibleData.forEach(data => {
+                data.verses.forEach((verse, index) => {
+                    if (verse.toLowerCase().includes(lowerQuery)) {
+                        matchCount++;
+                        // Highlight the search term
+                        const regex = new RegExp(`(${query})`, "gi");
+                        const highlightedVerse = verse.replace(regex, "<span class='highlight'>$1</span>");
+                        
+                        resultsHtml += `
+                            <div class="verse-container" style="margin-bottom: 20px;">
+                                <div style="font-size: 0.9em; color: var(--accent-color); font-weight: bold; font-family: sans-serif;">
+                                    ${data.book} ${data.chapter}:${index + 1}
+                                </div>
+                                <span>${highlightedVerse}</span>
+                            </div>
+                        `;
                     }
-                    return;
-                }
-                
-                const results = [];
-                
-                bibleData.forEach(bookObj => {
-                    bookObj.chapters.forEach(chapObj => {
-                        chapObj.verses.forEach((verseText, vIndex) => {
-                            if (verseText.toLowerCase().includes(query)) {
-                                results.push({
-                                    reference: `${bookObj.book} ${chapObj.chapter}:${vIndex + 1}`,
-                                    text: verseText,
-                                    book: bookObj.book,
-                                    chapter: chapObj.chapter,
-                                    verses: chapObj.verses
-                                });
-                            }
-                        });
-                    });
                 });
-                
-                displaySearchResults(query, results);
             });
 
-            // Render Search Results
-            function displaySearchResults(query, results) {
-                chapterTitleEl.innerText = `Search Results for "${query}"`;
-                readerAreaEl.innerHTML = "";
-                
-                if (results.length === 0) {
-                    readerAreaEl.innerHTML = "<p>No matches found.</p>";
-                    return;
-                }
-                
-                const resultCount = document.createElement("p");
-                resultCount.innerText = `Found ${results.length} results.`;
-                resultCount.style.marginBottom = "20px";
-                readerAreaEl.appendChild(resultCount);
-                
-                results.forEach(res => {
-                    const resultDiv = document.createElement("div");
-                    resultDiv.className = "search-result";
-                    
-                    const refEl = document.createElement("div");
-                    refEl.className = "search-ref";
-                    refEl.innerText = res.reference;
-                    
-                    refEl.addEventListener("click", () => {
-                        searchInput.value = ""; 
-                        displayChapter(res.book, res.chapter, res.verses);
-                    });
-                    
-                    const textEl = document.createElement("div");
-                    const regex = new RegExp(`(${query})`, 'gi');
-                    textEl.innerHTML = res.text.replace(regex, '<mark>$1</mark>');
-                    
-                    resultDiv.appendChild(refEl);
-                    resultDiv.appendChild(textEl);
-                    readerAreaEl.appendChild(resultDiv);
-                });
+            if (matchCount === 0) {
+                resultsHtml += `<p style="color: #666;">No results found.</p>`;
             }
 
-            renderNavigation();
+            readerView.innerHTML = resultsHtml;
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        }
+
+        // Event listener for the search bar
+        searchBar.addEventListener('input', (e) => {
+            handleSearch(e.target.value);
+        });
+
+        // Initialize the app when the page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof bibleData !== 'undefined') {
+                initNavigation();
+                // Optionally load the first chapter automatically:
+                // if(bibleData.length > 0) displayChapter(bibleData[0]);
+            } else {
+                readerView.innerHTML = '<h2 style="color: red;">Error: Could not load bible-data.js</h2>';
+            }
         });
     </script>
 </body>
