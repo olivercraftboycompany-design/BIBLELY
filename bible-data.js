@@ -1090,6 +1090,6 @@ const bibleData = [
     "Then Jacob offered sacrifice upon the mount, and called his brethren to eat bread: and they did eat bread, and tarried all night in the mount.",
     "And early in the morning Laban rose up, and kissed his sons and his daughters, and blessed them: and Laban departed, and returned unto his place."
   ]
-},
+}
 ];
 
